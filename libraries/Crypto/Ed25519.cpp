@@ -628,20 +628,10 @@ bool Ed25519::decodePoint(Point &point, const uint8_t *buf)
  */
 void Ed25519::deriveKeys(SHA512 *hash, limb_t *a, const uint8_t privateKey[32])
 {
-    /*
-    // Hash the private key to get the "a" scalar and the message prefix.
-    uint8_t *buf = (uint8_t *)(hash->state.w); // Reuse hash buffer to save memory.
-    hash->reset();
-    hash->update(privateKey, 32);
-    hash->finalize(buf, 0);*/
     uint8_t buf[32];
 
     for (uint8_t i = 0; i < 32; i++)
         buf[i] = privateKey[i];
-        
-    buf[0]  &= 0xF8;
-    buf[31] &= 0x7F;
-    buf[31] |= 0x40;
 
     // Unpack the first half of the hash value into "a".
     BigNumberUtil::unpackLE(a, NUM_LIMBS_256BIT, buf, 32);
